@@ -80,36 +80,25 @@ def main(page: ft.Page):
     def cargar_store():
         juegos = juegos_col.find()
 
-        return ft.Container(  # Contenedor principal para expandir
-            expand=True,
-            content=ft.ListView(
-                expand=True, spacing=10, padding=20, auto_scroll=True,
-                controls=[
-                    ft.Container(  # Contenedor de cada fila con altura fija
-                        height=120,
-                        content=ft.Row(
-                            [
-                                ft.Image(
-                                    src=j["imagen"],  
-                                    width=10,
-                                    height=10,
-                                    fit=ft.ImageFit.CONTAIN
-                                ),
-                                ft.Text(f"{j['titulo']} - ${j['precio']}"),
-                                ft.IconButton(
-                                    ft.Icons.SHOPPING_CART,
-                                    on_click=lambda e, id=j['id_juego']: agregar_al_carrito(id)
-                                )
-                            ],
-                            expand=True,  # Expandir la fila
-                            alignment=ft.MainAxisAlignment.START
-                        )
+        return ft.ListView(  # Se usa ListView para scroll
+            expand=True,  # Ocupa todo el espacio disponible
+            controls=[
+                ft.Row([
+                    ft.Image(
+                        src=j["imagen"],  
+                        width=150,
+                        height=150,
+                        fit=ft.ImageFit.CONTAIN
+                    ),
+                    ft.Text(f"{j['titulo']} - ${j['precio']}"),
+                    ft.IconButton(
+                        ft.Icons.SHOPPING_CART,
+                        on_click=lambda e, id=j['id_juego']: agregar_al_carrito(id)
                     )
-                    for j in juegos
-                ]
-            )
+                ])
+                for j in juegos
+            ]
         )
-
 
 
     # --- Función para cargar el carrito  ---

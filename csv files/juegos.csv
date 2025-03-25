@@ -1,14 +1,6 @@
 id_juego,titulo,desarrollador,precio,stock,imagen
-101,Cyberpunk 2077,CD Projekt,59.99,100, imagenes/cy.jpg
-102,Elden Ring,FromSoftware,49.99,200, imagenes/cy.jpg
-103,God of War,Santa Monica,39.99,150, imagenes/cy.jpg
-104,Hollow Knight,Team Cherry,15.99,300, imagenes/cy.jpg
-105,Red Dead Redemption 2,Rockstar,69.99,120, imagenes/cy.jpg
-106, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-107, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-108, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-109, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-110, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-111, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-112, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
-113, Cult of The Lam, Devolver, 40.00, 300, imagenes/cy.jpg
+101,Cyberpunk 2077,CD Projekt,59.99,100,imagenes/cy.jpg
+102,Elden Ring,FromSoftware,49.99,200,imagenes/cy.jpg
+103,God of War,Santa Monica,39.99,150,imagenes/cy.jpg
+104,Hollow Knight,Team Cherry,15.99,300,imagenes/cy.jpg
+105,Red Dead Redemption 2,Rockstar,69.99,120,imagenes/cy.jpg
