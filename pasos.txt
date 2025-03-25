@@ -1,0 +1,31 @@
+Primero se crea la estructura basica de la aplicacion quitando el title bar que es donde se almacena el close mini max
+Codigo Basico Sin title bar
+import flet as ft
+
+def main(page: ft.Page):
+    page.window.title_bar_hidden = True
+    page.window.title_bar_buttons_hidden = True
+
+    page.add(
+        ft.Row(
+            [
+                ft.WindowDragArea(
+                    ft.Container(
+                        ft.Text("Drag Area."),
+                        bgcolor=ft.Colors.AMBER_300,
+                        padding=10
+                    ),
+                    expand=True
+                ),
+                ft.IconButton(ft.Icons.CLOSE, on_click=lambda _: page.window.close()),
+                ft.IconButton(ft.Icons.CLOSE, on_click=lambda _: page.window.close())
+            ]
+        )
+    )
+
+ft.app(main)
+
+
+Nota: Se pueden importar datos desde un archivo csv separado por comas id,nombre,edad etc se guarda en un archivo de texto y luego se guarda como csv y se importa en mongocompass
+
+Luego importamos pymongo bueno antes lo instalamos con pip install pymongo
