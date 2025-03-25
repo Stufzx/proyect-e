@@ -35,13 +35,11 @@ def main(page: ft.Page):
         global usuario_id
         if not email_input.value or not password_input.value:
             page.open(ft.SnackBar(ft.Text(f"Debe Llenar todos los campos",color="red")))
-            page.snack_bar.open = True
             page.update()
             return
         
         if usuarios_col.find_one({"email": email_input.value}):
             page.open(ft.SnackBar(ft.Text(f"Usuario ya existente",color="red")))
-            page.snack_bar.open = True
             page.update()
             return
         
@@ -53,7 +51,6 @@ def main(page: ft.Page):
     def comprar_juego(juego_id):
         if compras_col.find_one({"id_usuario": usuario_id, "id_juego": juego_id}):
             page.open(ft.SnackBar(ft.Text(f"Ya tienes este juego",color="red")))
-            page.snack_bar.open = True
             page.update()
             return
 
@@ -63,7 +60,6 @@ def main(page: ft.Page):
 
         if usuario["saldo"] < juego["precio"]:
             page.open(ft.SnackBar(ft.Text(f"Saldo Insuficiente",color="red")))
-            page.snack_bar.open = True
             page.update()
             return
 
@@ -77,22 +73,63 @@ def main(page: ft.Page):
         carrito_col.delete_one({"id_usuario": usuario_id, "id_juego": juego_id})
 
         page.open(ft.SnackBar(ft.Text(f"Compra realizada con exito",color="green")))
-        page.snack_bar.open = True
         page.update()
 
     # --- Función para cargar la Store ---
+
     def cargar_store():
         juegos = juegos_col.find()
-        return ft.Column(
-            controls=[
-                ft.Row([
-                    ft.Text(f"{j['titulo']} - ${j['precio']}"),
-                    ft.IconButton(ft.Icons.SHOPPING_CART, on_click=lambda e, id=j['id_juego']: agregar_al_carrito(id)),
-                    ft.ElevatedButton("Comprar", on_click=lambda e, id=j['id_juego']: comprar_juego(id))
-                ])
-                for j in juegos
-            ]
+
+        return ft.Container(  # Contenedor principal para expandir
+            expand=True,
+            content=ft.ListView(
+                expand=True, spacing=10, padding=20, auto_scroll=True,
+                controls=[
+                    ft.Container(  # Contenedor de cada fila con altura fija
+                        height=120,
+                        content=ft.Row(
+                            [
+                                ft.Image(
+                                    src=j["imagen"],  
+                                    width=10,
+                                    height=10,
+                                    fit=ft.ImageFit.CONTAIN
+                                ),
+                                ft.Text(f"{j['titulo']} - ${j['precio']}"),
+                                ft.IconButton(
+                                    ft.Icons.SHOPPING_CART,
+                                    on_click=lambda e, id=j['id_juego']: agregar_al_carrito(id)
+                                )
+                            ],
+                            expand=True,  # Expandir la fila
+                            alignment=ft.MainAxisAlignment.START
+                        )
+                    )
+                    for j in juegos
+                ]
+            )
         )
+
+
+
+    # --- Función para cargar el carrito  ---
+    def cargar_carrito():
+
+        carrito = carrito_col.find({"id_usuario": usuario_id})
+
+        juegos_carrito = []
+        for juegos in carrito:
+            juego = juegos_col.find_one({"id_juego": juegos["id_juego"]})
+            if juego:
+                juegos_carrito.append(
+                    ft.Row([
+                        ft.Text(juego["titulo"], size=16, weight=ft.FontWeight.BOLD),
+                        ft.ElevatedButton("Comprar", on_click=lambda e, j=juego["id_juego"]: comprar_juego(j))
+                    ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+                )
+
+        return ft.Column(controls=juegos_carrito if juegos_carrito else [ft.Text("No tienes juegos agregados al carrito todavía")])
+
 
     # --- Función para cargar la Biblioteca ---
     def cargar_biblioteca():
@@ -128,8 +165,10 @@ def main(page: ft.Page):
         def cambiar_seccion(e):
             if e.control.text == "Store":
                 content.controls[1] = cargar_store()
-            else:
+            elif e.control.text == "Biblioteca":
                 content.controls[1] = cargar_biblioteca()
+            elif e.control.text == "Carrito":
+                content.controls[1] = cargar_carrito()
             page.update()
 
         barra_superior = ft.Row([
@@ -149,20 +188,21 @@ def main(page: ft.Page):
         sidebar = ft.Column([
             ft.Text("Menú", size=18, weight=ft.FontWeight.BOLD),
             ft.ElevatedButton("Store", on_click=cambiar_seccion),
-            ft.ElevatedButton("Biblioteca", on_click=cambiar_seccion)
+            ft.ElevatedButton("Biblioteca", on_click=cambiar_seccion),
+            ft.ElevatedButton("Carrito", on_click=cambiar_seccion)
         ], spacing=10)
 
         content = ft.Column([
             ft.Text("Store", size=20, weight=ft.FontWeight.BOLD),
             cargar_store()
         ], expand=True)
-
+        
         page.add(
             ft.Column([
                 barra_superior,
                 ft.Row([
                     sidebar,
-                    ft.VerticalDivider(),
+                    ft.VerticalDivider(), # Separacion entre el menu y el contenido
                     content
                 ], expand=True)
             ])
@@ -175,15 +215,32 @@ def main(page: ft.Page):
     password_input = ft.TextField(label="Contraseña", password=True, width=300)
     login_button = ft.ElevatedButton("Iniciar Sesión", on_click=iniciar_sesion)
     register_button = ft.TextButton("¿No tienes cuenta? Regístrate", on_click=registrar_usuario)
-
+    drag_area = ft.Row([
+        ft.WindowDragArea(
+            ft.Container(
+                    #ft.Text("Esencia Gamesss", size=14),
+                    bgcolor=ft.Colors.TRANSPARENT,
+                    padding=20,
+                    expand=True
+                ),
+                expand=True
+                
+        ),
+        ft.IconButton(ft.Icons.CLOSE, on_click=lambda _: page.window.close(), icon_color="red")
+        ],alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     login_view = ft.Column([
         ft.Text("Bienvenido a Esencia Games", size=20, weight=ft.FontWeight.BOLD),
         email_input,
         password_input,
         login_button,
-        register_button
-    ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
+        register_button,
+        
 
+    ], alignment=ft.MainAxisAlignment.CENTER, spacing=10)
+    page.add(ft.Container(drag_area, alignment=ft.alignment.top_right))
     page.add(ft.Container(login_view, alignment=ft.alignment.center))
+    
+
+
 
 ft.app(target=main)
